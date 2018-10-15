@@ -1,6 +1,8 @@
 Python Arcade Game Template For GameShell
 =========================================
 
+.. image:: doc/screenshot.png
+
 These are instructions on how to get a Python game using the Arcade_ library
 working with the GameShell_.
 
