@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3.6 ~/games/my_arcade_game/src/my_arcade_game.py
+python3.6 ~/games/gameshell_template/src/my_arcade_game.py
