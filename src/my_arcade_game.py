@@ -27,6 +27,14 @@ class Bullet(arcade.Sprite):
     def update(self):
         self.center_y += BULLET_SPEED
 
+class PlayerSprite(arcade.Sprite):
+    def update(self):
+        self.center_x += self.change_x
+
+        if self.left < 0:
+            self.left = 0
+        if self.right > SCREEN_WIDTH:
+            self.right = SCREEN_WIDTH
 
 class MyGame(arcade.Window):
     """ Main application class. """
@@ -71,7 +79,7 @@ class MyGame(arcade.Window):
         self.score = 0
 
         # Image from kenney.nl
-        self.player_sprite = arcade.Sprite("images/character.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite = PlayerSprite("images/character.png", SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = 50
         self.player_sprite.center_y = 15
         self.player_list.append(self.player_sprite)
@@ -108,6 +116,10 @@ class MyGame(arcade.Window):
 
         # Render the text
         arcade.draw_text(f"Score: {self.score}", 10, SCREEN_HEIGHT - 12, arcade.color.WHITE, 12)
+
+        if len(self.coin_list) == 0:
+            arcade.draw_text(f"You Won!", 10, SCREEN_HEIGHT / 2 + 8, arcade.color.WHITE, 14)
+            arcade.draw_text(f"Press Menu To Exit", 10, SCREEN_HEIGHT / 2 - 8, arcade.color.WHITE, 14)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -172,7 +184,6 @@ class MyGame(arcade.Window):
             # If the bullet flies off-screen, remove it.
             if bullet.bottom > SCREEN_HEIGHT:
                 bullet.kill()
-
 
 def main():
     window = MyGame()
