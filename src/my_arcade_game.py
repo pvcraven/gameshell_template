@@ -92,8 +92,9 @@ class MyGame(arcade.Window):
             coin = arcade.Sprite("images/coin_01.png", SPRITE_SCALING_COIN)
 
             # Position the coin
-            coin.center_x = random.randrange(SCREEN_WIDTH)
-            coin.center_y = random.randrange(50, SCREEN_HEIGHT)
+            while coin.left < 0 or coin.right > SCREEN_WIDTH:
+                coin.center_x = random.randrange(SCREEN_WIDTH)
+                coin.center_y = random.randrange(50, SCREEN_HEIGHT)
 
             # Add the coin to the lists
             self.coin_list.append(coin)
