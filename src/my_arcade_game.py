@@ -116,7 +116,7 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = -MOVEMENT_SPEED
         elif key == arcade.key.RIGHT:
             self.player_sprite.change_x = MOVEMENT_SPEED
-        elif key == arcade.key.M:
+        elif key == arcade.key.J:
             # Gunshot sound
             arcade.sound.play_sound(self.gun_sound)
             # Create a bullet
@@ -132,6 +132,8 @@ class MyGame(arcade.Window):
 
             # Add the bullet to the appropriate lists
             self.bullet_list.append(bullet)
+        elif key == arcade.key.ESCAPE:
+            exit()
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
