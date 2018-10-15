@@ -12,9 +12,9 @@ import random
 import arcade
 import os
 
-SPRITE_SCALING_PLAYER = 0.25
-SPRITE_SCALING_COIN = 0.1
-SPRITE_SCALING_LASER = 0.3
+SPRITE_SCALING_PLAYER = 0.3
+SPRITE_SCALING_COIN = 0.15
+SPRITE_SCALING_LASER = 0.4
 COIN_COUNT = 50
 
 SCREEN_WIDTH = 320
@@ -81,7 +81,7 @@ class MyGame(arcade.Window):
         # Image from kenney.nl
         self.player_sprite = PlayerSprite("images/character.png", SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 15
+        self.player_sprite.center_y = 20
         self.player_list.append(self.player_sprite)
 
         # Create the coins

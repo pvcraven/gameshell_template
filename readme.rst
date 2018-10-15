@@ -45,6 +45,8 @@ Now that we have Python 3.6, we need to install the Arcade library. Do that with
 Clone Game
 ----------
 
+Now clone/grab the code from GitHub:
+
 .. code-block:: bash
 
     cd ~/games
@@ -53,12 +55,35 @@ Clone Game
 Install the Game
 ----------------
 
+Now we have the code installed, but there is not a link to it from the menu.
+Run this command to copy over the link:
+
 .. code-block:: bash
 
     cd ~/games/gameshell_tempate
     chmod u+x install.sh
     ./install.sh
 
+Reboot
+------
+
+We installed the link. We need to reboot the device to re-look at the links.
+
+.. code-block:: bash
+
+    sudo reboot
+
+Update The Code
+---------------
+
+Something new on GitHub you want to pull down?
+
+You can update the code with:
+
+.. code-block:: bash
+
+    cd ~/games/gameshell_tempate
+    git pull
 
 .. _GameShell: https://www.clockworkpi.com/
 .. _Arcade: http://arcade.academy/
