@@ -118,7 +118,7 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = MOVEMENT_SPEED
         elif key == arcade.key.J:
             # Gunshot sound
-            arcade.sound.play_sound(self.gun_sound)
+            # arcade.sound.play_sound(self.gun_sound)
             # Create a bullet
             bullet = Bullet("images/laserBlue01.png", SPRITE_SCALING_LASER)
 
@@ -167,7 +167,7 @@ class MyGame(arcade.Window):
                 self.score += 1
 
                 # Hit Sound
-                arcade.sound.play_sound(self.hit_sound)
+                # arcade.sound.play_sound(self.hit_sound)
 
             # If the bullet flies off-screen, remove it.
             if bullet.bottom > SCREEN_HEIGHT:
