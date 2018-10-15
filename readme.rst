@@ -1,20 +1,25 @@
-Python Arcade Game Template For Gameshell
+Python Arcade Game Template For GameShell
 =========================================
+
+These are instructions on how to get a Python game using the Arcade_ library
+working with the GameShell_.
+
+Quick overview:
 
 * Install Python 3.6
 * Install the Arcade library
-* Clone the template
-* Install
+* Clone the game from GitHub
+* Install link to menu
 * Restart
 
 Install Python 3.6
 ------------------
 
-Gameshell runs on Debian Linux. Right now, Debian uses Python 3.5, and Arcade
+GameShell runs on Debian Linux. Right now, Debian uses Python 3.5, and Arcade
 requires 3.6. So to install 3.6, we need to tell Debian to look at the "testing"
 set of files.
 
-Shell over to your Gameshell, and copy/paste the following:
+Shell over to your GameShell, and copy/paste the following:
 
 .. code-block:: bash
 
@@ -53,3 +58,7 @@ Install the Game
     cd ~/games/gameshell_tempate
     chmod u+x install.sh
     ./install.sh
+
+
+.. _GameShell: https://www.clockworkpi.com/
+.. _Arcade: http://arcade.academy/
