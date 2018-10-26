@@ -12,17 +12,6 @@ import random
 import arcade
 import os
 
-SPRITE_SCALING_PLAYER = 0.3
-SPRITE_SCALING_COIN = 0.15
-SPRITE_SCALING_LASER = 0.4
-COIN_COUNT = 50
-
-SCREEN_WIDTH = 320
-SCREEN_HEIGHT = 240
-
-BULLET_SPEED = 7
-MOVEMENT_SPEED = 3
-
 # Gameshell Keymappings
 GAMESHELL_A = arcade.key.J
 GAMESHELL_Y = arcade.key.I
@@ -39,6 +28,22 @@ GAMESHELL_SHIFT_SELECT = arcade.key.MINUS
 GAMESHELL_SHIFT_START = arcade.key.PLUS
 GAMESHELL_SHIFT_MENU = arcade.key.BACKSPACE
 
+
+SPRITE_SCALING_PLAYER = 0.3
+SPRITE_SCALING_COIN = 0.15
+SPRITE_SCALING_LASER = 0.4
+COIN_COUNT = 5
+
+SCREEN_WIDTH = 320
+SCREEN_HEIGHT = 240
+
+BULLET_SPEED = 7
+MOVEMENT_SPEED = 3
+
+READY = 0
+RUNNING = 1
+YOU_WON = 2
+YOU_LOST = 3
 
 class PlayerSprite(arcade.Sprite):
     def update(self):
@@ -57,12 +62,8 @@ class MyGame(arcade.Window):
     def __init__(self):
         """ Initializer """
         # Call the parent class initializer
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "Sprites and Bullets Demo")
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "")
 
-        # Set the working directory (where we expect to find files) to the same
-        # directory this .py file is in. You can leave this out of your own
-        # code, but it is needed to easily run the examples using "python -m"
-        # as mentioned at the top of this program.
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
 
@@ -75,9 +76,7 @@ class MyGame(arcade.Window):
         self.player_sprite = None
         self.score = 0
 
-        # Load sounds. Sounds from kenney.nl
-        self.gun_sound = arcade.sound.load_sound("sounds/laser1.wav")
-        self.hit_sound = arcade.sound.load_sound("sounds/phaseJump1.wav")
+        self.state = READY
 
         arcade.set_background_color(arcade.color.AMAZON)
 
@@ -110,12 +109,11 @@ class MyGame(arcade.Window):
             while coin.left < 0 or coin.right > SCREEN_WIDTH:
                 coin.center_x = random.randrange(SCREEN_WIDTH)
                 coin.center_y = random.randrange(SCREEN_HEIGHT)
+                coin.change_x = random.randrange(-1, 2)
+                coin.change_y = random.randrange(-1, 2)
 
             # Add the coin to the lists
             self.coin_list.append(coin)
-
-        # Set the background color
-        arcade.set_background_color(arcade.color.AMAZON)
 
     def on_draw(self):
         """
@@ -131,11 +129,36 @@ class MyGame(arcade.Window):
         self.player_list.draw()
 
         # Render the text
-        arcade.draw_text(f"Score: {self.score}", 10, SCREEN_HEIGHT - 12, arcade.color.WHITE, 12)
+        arcade.draw_text(f"Score: {self.score}", 5, SCREEN_HEIGHT - 12, arcade.color.WHITE, 12)
 
-        if len(self.coin_list) == 0:
-            arcade.draw_text(f"You Won!", 10, SCREEN_HEIGHT / 2 + 8, arcade.color.WHITE, 14)
-            arcade.draw_text(f"Press Menu To Exit", 10, SCREEN_HEIGHT / 2 - 8, arcade.color.WHITE, 14)
+        line_height = 20
+        font_size = 16
+        text_color = arcade.color.BLACK
+        if self.state == YOU_WON:
+            y_pos = SCREEN_HEIGHT / 2 + 16
+            arcade.draw_text(f"You Won!", 10, y_pos, text_color, font_size)
+            y_pos -= line_height
+            arcade.draw_text(f"Press Select To Restart", 10, y_pos, text_color, font_size)
+            y_pos -= line_height
+            arcade.draw_text(f"Press Menu To Exit", 10, y_pos, text_color, font_size)
+
+        if self.state == READY:
+            y_pos = SCREEN_HEIGHT / 2 + 16
+            arcade.draw_text(f"Arrow keys move, buttons fire", 10, y_pos, text_color, font_size)
+            y_pos -= line_height
+            arcade.draw_text(f"Press start to begin", 10, y_pos, text_color, font_size)
+            y_pos -= line_height
+            arcade.draw_text(f"Press menu to exit", 10, y_pos, text_color, font_size)
+
+
+    def player_shoot(self, angle, change_x, change_y):
+        bullet = arcade.Sprite("images/laserBlue01.png", SPRITE_SCALING_LASER)
+        bullet.change_y = change_y
+        bullet.change_x = change_x
+        bullet.angle = angle
+        bullet.center_x = self.player_sprite.center_x
+        bullet.center_y = self.player_sprite.center_y
+        self.bullet_list.append(bullet)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -152,80 +175,27 @@ class MyGame(arcade.Window):
 
         # Gameshell "A" key
         elif key == GAMESHELL_A:
-            # arcade.sound.play_sound(self.gun_sound)
-
-            # Create a bullet
-            bullet = arcade.Sprite("images/laserBlue01.png", SPRITE_SCALING_LASER)
-            bullet.change_y = -BULLET_SPEED
-            # The image points to the right, and we want it to point up. So
-            # rotate it.
-            bullet.angle = 270
-
-            # Position the bullet
-            bullet.center_x = self.player_sprite.center_x
-            bullet.top = self.player_sprite.bottom
-
-            # Add the bullet to the appropriate lists
-            self.bullet_list.append(bullet)
+            self.player_shoot(angle=270, change_x=0, change_y=-BULLET_SPEED)
 
         # Gameshell "Y" key
         elif key == GAMESHELL_Y:
-            # arcade.sound.play_sound(self.gun_sound)
-
-            # Create a bullet
-            bullet = arcade.Sprite("images/laserBlue01.png", SPRITE_SCALING_LASER)
-            bullet.change_y = BULLET_SPEED
-            # The image points to the right, and we want it to point up. So
-            # rotate it.
-            bullet.angle = 90
-
-            # Position the bullet
-            bullet.center_x = self.player_sprite.center_x
-            bullet.bottom = self.player_sprite.top
-
-            # Add the bullet to the appropriate lists
-            self.bullet_list.append(bullet)
+            self.player_shoot(angle=90, change_x=0, change_y=BULLET_SPEED)
 
         # Gameshell "X" key
         elif key == GAMESHELL_X:
-
-            # arcade.sound.play_sound(self.gun_sound)
-
-            # Create a bullet
-            bullet = arcade.Sprite("images/laserBlue01.png", SPRITE_SCALING_LASER)
-            bullet.change_x = -BULLET_SPEED
-            # The image points to the right, and we want it to point up. So
-            # rotate it.
-            bullet.angle = 180
-
-            # Position the bullet
-            bullet.center_y = self.player_sprite.center_y
-            bullet.right = self.player_sprite.left
-
-            # Add the bullet to the appropriate lists
-            self.bullet_list.append(bullet)
+            self.player_shoot(angle=180, change_x=-BULLET_SPEED, change_y=0)
 
         # Gameshell "B" key
         elif key == GAMESHELL_B:
-            # arcade.sound.play_sound(self.gun_sound)
-
-            # Create a bullet
-            bullet = arcade.Sprite("images/laserBlue01.png", SPRITE_SCALING_LASER)
-            bullet.change_x = BULLET_SPEED
-            # The image points to the right, and we want it to point up. So
-            # rotate it.
-            bullet.angle = 0
-
-            # Position the bullet
-            bullet.center_y = self.player_sprite.center_y
-            bullet.left = self.player_sprite.right
-
-            # Add the bullet to the appropriate lists
-            self.bullet_list.append(bullet)
+            self.player_shoot(angle=0, change_x=BULLET_SPEED, change_y=0)
 
         # Gameshell "Start" button
-        elif key == GAMESHELL_START:
+        elif key == GAMESHELL_SELECT and (self.state == YOU_LOST or self.state == YOU_WON):
             self.setup()
+            self.state = READY
+
+        elif key == GAMESHELL_START and self.state == READY:
+            self.state = RUNNING
 
         # Gameshell "Menu" button
         elif key == GAMESHELL_MENU:
@@ -243,30 +213,46 @@ class MyGame(arcade.Window):
         """ Movement and game logic """
 
         # Call update on bullet sprites
-        self.bullet_list.update()
-        self.player_list.update()
+        if self.state == RUNNING:
+            self.coin_list.update()
+            self.bullet_list.update()
+            self.player_list.update()
 
-        # Loop through each bullet
-        for bullet in self.bullet_list:
+            for coin in self.coin_list:
+                if coin.left < 0 and coin.change_x < 0:
+                    coin.change_x *= -1
+                if coin.right > SCREEN_WIDTH and coin.change_x > 0:
+                    coin.change_x *= -1
+                if coin.top > SCREEN_HEIGHT and coin.change_y > 0:
+                    coin.change_y *= -1
+                if coin.bottom < 0 and coin.change_y < 0:
+                    coin.change_y *= -1
 
-            # Check this bullet to see if it hit a coin
-            hit_list = arcade.check_for_collision_with_list(bullet, self.coin_list)
+            # Loop through each bullet
+            for bullet in self.bullet_list:
 
-            # If it did, get rid of the bullet
-            if len(hit_list) > 0:
-                bullet.kill()
+                # Check this bullet to see if it hit a coin
+                hit_list = arcade.check_for_collision_with_list(bullet, self.coin_list)
 
-            # For every coin we hit, add to the score and remove the coin
-            for coin in hit_list:
-                coin.kill()
-                self.score += 1
+                # If it did, get rid of the bullet
+                if len(hit_list) > 0:
+                    bullet.kill()
 
-                # Hit Sound
-                # arcade.sound.play_sound(self.hit_sound)
+                # For every coin we hit, add to the score and remove the coin
+                for coin in hit_list:
+                    coin.kill()
+                    self.score += 1
 
-            # If the bullet flies off-screen, remove it.
-            if bullet.bottom > SCREEN_HEIGHT:
-                bullet.kill()
+                    # Hit Sound
+                    # arcade.sound.play_sound(self.hit_sound)
+
+                # If the bullet flies off-screen, remove it.
+                if bullet.bottom > SCREEN_HEIGHT or bullet.top < 0 or bullet.left > SCREEN_WIDTH or bullet.right < 0:
+                    bullet.kill()
+
+            if len(self.coin_list) == 0:
+                self.state = YOU_WON
+
 
 def main():
     window = MyGame()
