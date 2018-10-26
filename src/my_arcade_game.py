@@ -20,21 +20,36 @@ COIN_COUNT = 50
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 
-BULLET_SPEED = 5
-MOVEMENT_SPEED = 2
+BULLET_SPEED = 7
+MOVEMENT_SPEED = 3
 
-class Bullet(arcade.Sprite):
-    def update(self):
-        self.center_y += BULLET_SPEED
+# Gameshell Keymappings
+GAMESHELL_A = arcade.key.J
+GAMESHELL_Y = arcade.key.I
+GAMESHELL_X = arcade.key.U
+GAMESHELL_B = arcade.key.K
+GAMESHELL_START = arcade.key.ENTER
+GAMESHELL_MENU = arcade.key.ESCAPE
+GAMESHELL_SELECT = arcade.key.SPACE
+GAMESHELL_SHIFT_A = arcade.key.H
+GAMESHELL_SHIFT_Y = arcade.key.O
+GAMESHELL_SHIFT_X = arcade.key.Y
+GAMESHELL_SHIFT_B = arcade.key.L
+GAMESHELL_SHIFT_SELECT = arcade.key.MINUS
+GAMESHELL_SHIFT_START = arcade.key.PLUS
+GAMESHELL_SHIFT_MENU = arcade.key.BACKSPACE
+
 
 class PlayerSprite(arcade.Sprite):
     def update(self):
         self.center_x += self.change_x
+        self.center_y += self.change_y
 
         if self.left < 0:
             self.left = 0
         if self.right > SCREEN_WIDTH:
             self.right = SCREEN_WIDTH
+
 
 class MyGame(arcade.Window):
     """ Main application class. """
@@ -94,7 +109,7 @@ class MyGame(arcade.Window):
             # Position the coin
             while coin.left < 0 or coin.right > SCREEN_WIDTH:
                 coin.center_x = random.randrange(SCREEN_WIDTH)
-                coin.center_y = random.randrange(50, SCREEN_HEIGHT)
+                coin.center_y = random.randrange(SCREEN_HEIGHT)
 
             # Add the coin to the lists
             self.coin_list.append(coin)
@@ -125,16 +140,41 @@ class MyGame(arcade.Window):
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
+        # Gameshell Arrow Keypad
         if key == arcade.key.LEFT:
             self.player_sprite.change_x = -MOVEMENT_SPEED
         elif key == arcade.key.RIGHT:
             self.player_sprite.change_x = MOVEMENT_SPEED
-        elif key == arcade.key.J:
-            # Gunshot sound
-            # arcade.sound.play_sound(self.gun_sound)
-            # Create a bullet
-            bullet = Bullet("images/laserBlue01.png", SPRITE_SCALING_LASER)
+        elif key == arcade.key.UP:
+            self.player_sprite.change_y = MOVEMENT_SPEED
+        elif key == arcade.key.DOWN:
+            self.player_sprite.change_y = -MOVEMENT_SPEED
 
+        # Gameshell "A" key
+        elif key == GAMESHELL_A:
+            # arcade.sound.play_sound(self.gun_sound)
+
+            # Create a bullet
+            bullet = arcade.Sprite("images/laserBlue01.png", SPRITE_SCALING_LASER)
+            bullet.change_y = -BULLET_SPEED
+            # The image points to the right, and we want it to point up. So
+            # rotate it.
+            bullet.angle = 270
+
+            # Position the bullet
+            bullet.center_x = self.player_sprite.center_x
+            bullet.top = self.player_sprite.bottom
+
+            # Add the bullet to the appropriate lists
+            self.bullet_list.append(bullet)
+
+        # Gameshell "Y" key
+        elif key == GAMESHELL_Y:
+            # arcade.sound.play_sound(self.gun_sound)
+
+            # Create a bullet
+            bullet = arcade.Sprite("images/laserBlue01.png", SPRITE_SCALING_LASER)
+            bullet.change_y = BULLET_SPEED
             # The image points to the right, and we want it to point up. So
             # rotate it.
             bullet.angle = 90
@@ -145,7 +185,50 @@ class MyGame(arcade.Window):
 
             # Add the bullet to the appropriate lists
             self.bullet_list.append(bullet)
-        elif key == arcade.key.ESCAPE:
+
+        # Gameshell "X" key
+        elif key == GAMESHELL_X:
+
+            # arcade.sound.play_sound(self.gun_sound)
+
+            # Create a bullet
+            bullet = arcade.Sprite("images/laserBlue01.png", SPRITE_SCALING_LASER)
+            bullet.change_x = -BULLET_SPEED
+            # The image points to the right, and we want it to point up. So
+            # rotate it.
+            bullet.angle = 180
+
+            # Position the bullet
+            bullet.center_y = self.player_sprite.center_y
+            bullet.right = self.player_sprite.left
+
+            # Add the bullet to the appropriate lists
+            self.bullet_list.append(bullet)
+
+        # Gameshell "B" key
+        elif key == GAMESHELL_B:
+            # arcade.sound.play_sound(self.gun_sound)
+
+            # Create a bullet
+            bullet = arcade.Sprite("images/laserBlue01.png", SPRITE_SCALING_LASER)
+            bullet.change_x = BULLET_SPEED
+            # The image points to the right, and we want it to point up. So
+            # rotate it.
+            bullet.angle = 0
+
+            # Position the bullet
+            bullet.center_y = self.player_sprite.center_y
+            bullet.left = self.player_sprite.right
+
+            # Add the bullet to the appropriate lists
+            self.bullet_list.append(bullet)
+
+        # Gameshell "Start" button
+        elif key == GAMESHELL_START:
+            self.setup()
+
+        # Gameshell "Menu" button
+        elif key == GAMESHELL_MENU:
             exit()
 
     def on_key_release(self, key, modifiers):
@@ -167,8 +250,7 @@ class MyGame(arcade.Window):
         for bullet in self.bullet_list:
 
             # Check this bullet to see if it hit a coin
-            hit_list = arcade.check_for_collision_with_list(bullet,
-                                                            self.coin_list)
+            hit_list = arcade.check_for_collision_with_list(bullet, self.coin_list)
 
             # If it did, get rid of the bullet
             if len(hit_list) > 0:
