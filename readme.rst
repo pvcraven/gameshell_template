@@ -27,14 +27,9 @@ Shell over to your GameShell, and copy/paste the following:
 
     echo "deb http://ftp.fr.debian.org/debian testing main" | sudo tee -a /etc/apt/sources.list
     echo 'APT::Default-Release "stable";' | sudo tee -a /etc/apt/apt.conf.d/00local
-
-After you do that, run then following commands:
-
-.. code-block:: bash
-
     sudo apt-get update
-
     sudo apt-get -t testing install -y python3.6
+
 
 Install Arcade
 --------------
